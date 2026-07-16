@@ -14,6 +14,7 @@ export type FormField = {
   type: FieldType;
   required: boolean;
   options?: string[];
+  dependsOn?: { fieldId: string; value: string };
 };
 
 export type FormDefinition = {

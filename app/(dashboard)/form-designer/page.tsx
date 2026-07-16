@@ -26,6 +26,10 @@ export default function FormDesignerPage() {
   const [options, setOptions] = useState<string[]>([]);
   const [optionDraft, setOptionDraft] = useState("");
 
+  // bağımlı zorunluluk
+  const [dependsOnFieldId, setDependsOnFieldId] = useState("");
+  const [dependsOnValue, setDependsOnValue] = useState("");
+
   // kaydetme durumu
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
@@ -54,6 +58,10 @@ export default function FormDesignerPage() {
       type,
       required,
       ...(type === "select" && { options }),
+      ...(dependsOnFieldId &&
+        dependsOnValue && {
+          dependsOn: { fieldId: dependsOnFieldId, value: dependsOnValue },
+        }),
     };
 
     setFields((prev) => [...prev, newField]);
@@ -61,6 +69,8 @@ export default function FormDesignerPage() {
     setRequired(false);
     setOptions([]);
     setOptionDraft("");
+    setDependsOnFieldId("");
+    setDependsOnValue("");
   }
 
   function handleRemoveField(id: string) {
@@ -172,6 +182,40 @@ export default function FormDesignerPage() {
             </div>
           )}
 
+          {fields.some((f) => f.type === "select") && (
+            <div className="mb-4 rounded border bg-gray-50 p-3">
+              <p className="mb-2 text-sm font-medium text-gray-600">
+                Bağımlı Zorunluluk (opsiyonel)
+              </p>
+
+              <Select
+                label="Şu alana bağlı"
+                options={fields
+                  .filter((f) => f.type === "select")
+                  .map((f) => f.label)}
+                placeholder="Bağımlılık yok"
+                value={fields.find((f) => f.id === dependsOnFieldId)?.label ?? ""}
+                onChange={(e) => {
+                  const selected = fields.find((f) => f.label === e.target.value);
+                  setDependsOnFieldId(selected?.id ?? "");
+                  setDependsOnValue("");
+                }}
+              />
+
+              {dependsOnFieldId && (
+                <Select
+                  label="Şu değer seçilirse zorunlu olur"
+                  options={
+                    fields.find((f) => f.id === dependsOnFieldId)?.options ?? []
+                  }
+                  placeholder="Değer seçin"
+                  value={dependsOnValue}
+                  onChange={(e) => setDependsOnValue(e.target.value)}
+                />
+              )}
+            </div>
+          )}
+
           <Checkbox
             label="Zorunlu alan"
             checked={required}
@@ -199,6 +243,7 @@ export default function FormDesignerPage() {
                   {f.label}{" "}
                   <span className="text-gray-400">
                     ({f.type}){f.required && " • zorunlu"}
+                    {f.dependsOn && " • bağımlı"}
                   </span>
                 </span>
                 <Button variant="danger" onClick={() => handleRemoveField(f.id)}>
