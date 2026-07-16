@@ -22,37 +22,87 @@ export default function FormDesignerPage() {
   const [type, setType] = useState<FieldType>("input");
   const [required, setRequired] = useState(false);
 
+  // select seçenekleri
+  const [options, setOptions] = useState<string[]>([]);
+  const [optionDraft, setOptionDraft] = useState("");
+
+  // kaydetme durumu
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  function handleAddOption() {
+    const value = optionDraft.trim();
+    if (!value || options.includes(value)) return;
+    setOptions((prev) => [...prev, value]);
+    setOptionDraft("");
+  }
+
+  function handleRemoveOption(opt: string) {
+    setOptions((prev) => prev.filter((o) => o !== opt));
+  }
+
   function handleAddField() {
     if (!label.trim()) return;
+    if (type === "select" && options.length === 0) return;
 
     const newField: FormField = {
       id: crypto.randomUUID(),
       label: label.trim(),
       type,
       required,
+      ...(type === "select" && { options }),
     };
 
     setFields((prev) => [...prev, newField]);
     setLabel("");
     setRequired(false);
+    setOptions([]);
+    setOptionDraft("");
   }
 
   function handleRemoveField(id: string) {
     setFields((prev) => prev.filter((f) => f.id !== id));
   }
 
-  function handleSaveForm() {
+  async function handleSaveForm() {
     if (!formName.trim() || fields.length === 0) return;
 
-    addForm({
+    setSaving(true);
+    setSaveMessage(null);
+
+    const form = {
       id: crypto.randomUUID(),
       name: formName.trim(),
       fields,
       createdAt: new Date().toISOString(),
-    });
+    };
 
-    setFormName("");
-    setFields([]);
+    try {
+      const res = await fetch("/api/forms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSaveMessage({ type: "error", text: data.message });
+        return;
+      }
+
+      addForm(data.form);
+      setFormName("");
+      setFields([]);
+      setSaveMessage({ type: "success", text: "Form kaydedildi ✓" });
+    } catch {
+      setSaveMessage({ type: "error", text: "Sunucuya ulaşılamadı" });
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -86,6 +136,41 @@ export default function FormDesignerPage() {
             value={type}
             onChange={(e) => setType(e.target.value as FieldType)}
           />
+
+          {type === "select" && (
+            <div className="mb-4 rounded border bg-gray-50 p-3">
+              <p className="mb-2 text-sm font-medium text-gray-600">Seçenekler</p>
+
+              <div className="flex gap-2">
+                <input
+                  value={optionDraft}
+                  onChange={(e) => setOptionDraft(e.target.value)}
+                  placeholder="Örn: Yıllık İzin"
+                  className="w-full rounded border px-3 py-2 text-sm"
+                />
+                <Button variant="secondary" onClick={handleAddOption}>
+                  Ekle
+                </Button>
+              </div>
+
+              <ul className="mt-2 space-y-1">
+                {options.map((opt) => (
+                  <li
+                    key={opt}
+                    className="flex items-center justify-between rounded bg-white px-3 py-1 text-sm"
+                  >
+                    {opt}
+                    <button
+                      onClick={() => handleRemoveOption(opt)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <Checkbox
             label="Zorunlu alan"
@@ -125,8 +210,22 @@ export default function FormDesignerPage() {
 
           {fields.length > 0 && (
             <div className="mt-4">
-              <Button onClick={handleSaveForm}>Formu Kaydet</Button>
+              <Button onClick={handleSaveForm} disabled={saving}>
+                {saving ? "Kaydediliyor..." : "Formu Kaydet"}
+              </Button>
             </div>
+          )}
+
+          {saveMessage && (
+            <p
+              className={`mt-3 text-sm ${
+                saveMessage.type === "success"
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}
+            >
+              {saveMessage.text}
+            </p>
           )}
         </div>
       </div>
