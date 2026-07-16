@@ -5,3 +5,20 @@ export type User = {
   username: string;
   role: Role;
 };
+
+export type FieldType = "input" | "number" | "select" | "checkbox" | "date";
+
+export type FormField = {
+  id: string;
+  label: string;
+  type: FieldType;
+  required: boolean;
+  options?: string[];
+};
+
+export type FormDefinition = {
+  id: string;
+  name: string;
+  fields: FormField[];
+  createdAt: string;
+};
