@@ -23,3 +23,22 @@ export type FormDefinition = {
   fields: FormField[];
   createdAt: string;
 };
+
+export type ProcessStatus = "Beklemede" | "DevamEdiyor" | "Tamamlandi" | "Reddedildi";
+
+export type ProcessAction = {
+  action: string;
+  by: string;
+  at: string;
+};
+
+export type ProcessInstance = {
+  id: string;
+  formId: string;
+  formName: string;
+  data: Record<string, string | boolean>;
+  status: ProcessStatus;
+  createdAt: string;
+  completedAt?: string;
+  history: ProcessAction[];
+};
