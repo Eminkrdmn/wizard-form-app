@@ -8,7 +8,21 @@ import Select from "@/components/ui/Select";
 import Checkbox from "@/components/ui/Checkbox";
 import Button from "@/components/ui/Button";
 
-const FIELD_TYPES: FieldType[] = ["input", "number", "select", "checkbox", "date"];
+import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import SortableFieldItem from "@/components/form-builder/SortableFieldItem";
+
+const FIELD_TYPES: FieldType[] = [
+  "input",
+  "number",
+  "select",
+  "checkbox",
+  "date",
+];
 
 export default function FormDesignerPage() {
   const addForm = useFormStore((s) => s.addForm);
@@ -77,6 +91,16 @@ export default function FormDesignerPage() {
     setFields((prev) => prev.filter((f) => f.id !== id));
   }
 
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setFields((prev) => {
+      const oldIndex = prev.findIndex((f) => f.id === active.id);
+      const newIndex = prev.findIndex((f) => f.id === over.id);
+      return arrayMove(prev, oldIndex, newIndex);
+    });
+  }
   async function handleSaveForm() {
     if (!formName.trim() || fields.length === 0) return;
 
@@ -149,7 +173,9 @@ export default function FormDesignerPage() {
 
           {type === "select" && (
             <div className="mb-4 rounded border bg-gray-50 p-3">
-              <p className="mb-2 text-sm font-medium text-gray-600">Seçenekler</p>
+              <p className="mb-2 text-sm font-medium text-gray-600">
+                Seçenekler
+              </p>
 
               <div className="flex gap-2">
                 <input
@@ -194,9 +220,13 @@ export default function FormDesignerPage() {
                   .filter((f) => f.type === "select")
                   .map((f) => f.label)}
                 placeholder="Bağımlılık yok"
-                value={fields.find((f) => f.id === dependsOnFieldId)?.label ?? ""}
+                value={
+                  fields.find((f) => f.id === dependsOnFieldId)?.label ?? ""
+                }
                 onChange={(e) => {
-                  const selected = fields.find((f) => f.label === e.target.value);
+                  const selected = fields.find(
+                    (f) => f.label === e.target.value,
+                  );
                   setDependsOnFieldId(selected?.id ?? "");
                   setDependsOnValue("");
                 }}
@@ -233,25 +263,25 @@ export default function FormDesignerPage() {
             <p className="text-sm text-gray-400">Henüz alan eklenmedi.</p>
           )}
 
-          <ul className="space-y-2">
-            {fields.map((f) => (
-              <li
-                key={f.id}
-                className="flex items-center justify-between rounded border px-3 py-2 text-sm"
-              >
-                <span>
-                  {f.label}{" "}
-                  <span className="text-gray-400">
-                    ({f.type}){f.required && " • zorunlu"}
-                    {f.dependsOn && " • bağımlı"}
-                  </span>
-                </span>
-                <Button variant="danger" onClick={() => handleRemoveField(f.id)}>
-                  Sil
-                </Button>
-              </li>
-            ))}
-          </ul>
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={fields.map((f) => f.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <ul className="space-y-2">
+                {fields.map((f) => (
+                  <SortableFieldItem
+                    key={f.id}
+                    field={f}
+                    onRemove={handleRemoveField}
+                  />
+                ))}
+              </ul>
+            </SortableContext>
+          </DndContext>
 
           {fields.length > 0 && (
             <div className="mt-4">
