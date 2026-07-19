@@ -9,17 +9,17 @@ const COLUMNS: { title: string; statuses: ProcessStatus[]; style: string }[] = [
   {
     title: "Bekleyen İşler",
     statuses: ["Beklemede"],
-    style: "border-yellow-300",
+    style: "border-yellow-400",
   },
   {
     title: "Devam Eden İşler",
     statuses: ["DevamEdiyor"],
-    style: "border-blue-300",
+    style: "border-blue-400",
   },
   {
     title: "Tamamlanan İşler",
     statuses: ["Tamamlandi", "Reddedildi"],
-    style: "border-green-300",
+    style: "border-green-400",
   },
 ];
 
@@ -30,7 +30,7 @@ export default function DashboardPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p className="mt-2 text-gray-600">
+      <p className="mt-2 text-ink-soft">
         Hoş geldin, {user?.username} ({user?.role})
       </p>
 
@@ -42,17 +42,17 @@ export default function DashboardPage() {
           return (
             <div
               key={col.title}
-              className={`rounded-lg border-t-4 bg-white p-4 ${col.style}`}
+              className={`rounded-lg border-t-4 bg-card p-4 ${col.style}`}
             >
               <h2 className="mb-3 font-semibold">
                 {col.title}{" "}
-                <span className="text-sm font-normal text-gray-400">
+                <span className="text-sm font-normal text-ink-soft">
                   ({items.length})
                 </span>
               </h2>
 
               {items.length === 0 && (
-                <p className="text-sm text-gray-400">Kayıt yok.</p>
+                <p className="text-sm text-ink-soft">Kayıt yok.</p>
               )}
 
               <ul className="space-y-2">
@@ -60,10 +60,10 @@ export default function DashboardPage() {
                   <li key={p.id}>
                     <Link
                       href={`/processes/${p.id}`}
-                      className="block rounded border px-3 py-2 text-sm hover:bg-gray-50"
+                      className="block rounded border border-line px-3 py-2 text-sm hover:bg-page"
                     >
                       <p className="font-medium">{p.formName}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-ink-soft">
                         {new Date(p.createdAt).toLocaleString("tr-TR")}
                         {p.status === "Reddedildi" && " • reddedildi"}
                       </p>

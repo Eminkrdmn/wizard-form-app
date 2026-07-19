@@ -6,7 +6,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const STYLES = {
   primary: "bg-blue-600 text-white hover:bg-blue-700",
-  secondary: "border text-gray-700 hover:bg-gray-100",
+  secondary: "border border-line hover:bg-page",
   danger: "bg-red-600 text-white hover:bg-red-700",
 };
 

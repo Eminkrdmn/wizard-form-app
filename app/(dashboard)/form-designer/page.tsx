@@ -156,7 +156,7 @@ export default function FormDesignerPage() {
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Sol: alan ekleme paneli */}
-          <div className="rounded-lg border bg-white p-4">
+          <div className="rounded-lg border border-line bg-card p-4">
             <h2 className="mb-4 font-semibold">Alan Ekle</h2>
 
             <Input
@@ -174,8 +174,8 @@ export default function FormDesignerPage() {
             />
 
             {type === "select" && (
-              <div className="mb-4 rounded border bg-gray-50 p-3">
-                <p className="mb-2 text-sm font-medium text-gray-600">
+              <div className="mb-4 rounded border border-line bg-page p-3">
+                <p className="mb-2 text-sm font-medium text-ink-soft">
                   Seçenekler
                 </p>
 
@@ -184,7 +184,7 @@ export default function FormDesignerPage() {
                     value={optionDraft}
                     onChange={(e) => setOptionDraft(e.target.value)}
                     placeholder="Örn: Yıllık İzin"
-                    className="w-full rounded border px-3 py-2 text-sm"
+                    className="w-full rounded border border-line bg-field px-3 py-2 text-sm"
                   />
                   <Button variant="secondary" onClick={handleAddOption}>
                     Ekle
@@ -195,12 +195,12 @@ export default function FormDesignerPage() {
                   {options.map((opt) => (
                     <li
                       key={opt}
-                      className="flex items-center justify-between rounded bg-white px-3 py-1 text-sm"
+                      className="flex items-center justify-between rounded bg-card px-3 py-1 text-sm"
                     >
                       {opt}
                       <button
                         onClick={() => handleRemoveOption(opt)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-red-400"
                       >
                         ✕
                       </button>
@@ -211,8 +211,8 @@ export default function FormDesignerPage() {
             )}
 
             {fields.some((f) => f.type === "select") && (
-              <div className="mb-4 rounded border bg-gray-50 p-3">
-                <p className="mb-2 text-sm font-medium text-gray-600">
+              <div className="mb-4 rounded border border-line bg-page p-3">
+                <p className="mb-2 text-sm font-medium text-ink-soft">
                   Bağımlı Zorunluluk (opsiyonel)
                 </p>
 
@@ -259,11 +259,11 @@ export default function FormDesignerPage() {
           </div>
 
           {/* Sağ: eklenen alanlar */}
-          <div className="rounded-lg border bg-white p-4">
+          <div className="rounded-lg border border-line bg-card p-4">
             <h2 className="mb-4 font-semibold">Eklenen Alanlar</h2>
 
             {fields.length === 0 && (
-              <p className="text-sm text-gray-400">Henüz alan eklenmedi.</p>
+              <p className="text-sm text-ink-soft">Henüz alan eklenmedi.</p>
             )}
 
             <DndContext
@@ -298,8 +298,8 @@ export default function FormDesignerPage() {
               <p
                 className={`mt-3 text-sm ${
                   saveMessage.type === "success"
-                    ? "text-green-600"
-                    : "text-red-600"
+                    ? "text-green-500"
+                    : "text-red-500"
                 }`}
               >
                 {saveMessage.text}

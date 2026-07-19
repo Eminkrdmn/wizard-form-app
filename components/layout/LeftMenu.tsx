@@ -27,7 +27,7 @@ export default function LeftMenu() {
   );
 
   return (
-    <nav className="w-56 border-r bg-white p-4">
+    <nav className="w-56 border-r border-line bg-card p-4">
       <ul className="space-y-1">
         {visibleItems.map((item) => {
           const active = pathname.startsWith(item.href);
@@ -36,9 +36,7 @@ export default function LeftMenu() {
               <Link
                 href={item.href}
                 className={`block rounded px-3 py-2 text-sm ${
-                  active
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
+                  active ? "bg-blue-600 text-white" : "hover:bg-page"
                 }`}
               >
                 {item.label}

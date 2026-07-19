@@ -14,16 +14,16 @@ export default function Header() {
   }
 
   return (
-    <header className="flex h-14 items-center justify-between border-b bg-white px-6">
-      <h1 className="text-lg font-bold text-gray-800">Wizard Form App</h1>
+    <header className="flex h-14 items-center justify-between border-b border-line bg-card px-6">
+      <h1 className="text-lg font-bold">Wizard Form App</h1>
 
       <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-600">
-          {user?.username} <span className="text-gray-400">({user?.role})</span>
+        <span className="text-sm text-ink-soft">
+          {user?.username} <span>({user?.role})</span>
         </span>
         <button
           onClick={handleLogout}
-          className="rounded border px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
+          className="rounded border border-line px-3 py-1 text-sm hover:bg-page"
         >
           Çıkış
         </button>

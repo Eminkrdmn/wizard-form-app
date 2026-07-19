@@ -26,20 +26,20 @@ export default function SortableFieldItem({
     <li
       ref={setNodeRef}
       style={style}
-      className="flex items-center justify-between rounded border bg-white px-3 py-2 text-sm"
+      className="flex items-center justify-between rounded border border-line bg-card px-3 py-2 text-sm"
     >
       <div className="flex items-center gap-2">
         <button
           {...attributes}
           {...listeners}
-          className="cursor-grab text-gray-400 hover:text-gray-600"
+          className="cursor-grab text-ink-soft hover:text-ink"
           aria-label="Sürükle"
         >
           ⠿
         </button>
         <span>
           {field.label}{" "}
-          <span className="text-gray-400">
+          <span className="text-ink-soft">
             ({field.type}){field.required && " • zorunlu"}
             {field.dependsOn && " • bağımlı"}
           </span>

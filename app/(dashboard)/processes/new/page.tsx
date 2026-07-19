@@ -69,8 +69,8 @@ export default function NewProcessPage() {
   if (!form) {
     return (
       <div>
-        <p className="text-gray-500">Form bulunamadı.</p>
-        <Link href="/processes" className="text-blue-600 underline">
+        <p className="text-ink-soft">Form bulunamadı.</p>
+        <Link href="/processes" className="text-blue-500 underline">
           Süreçler sayfasına dön
         </Link>
       </div>
@@ -81,7 +81,7 @@ export default function NewProcessPage() {
     <div className="max-w-lg">
       <h1 className="mb-6 text-2xl font-bold">{form.name}</h1>
 
-      <div className="rounded-lg border bg-white p-6">
+      <div className="rounded-lg border border-line bg-card p-6">
         <DynamicForm
           form={form}
           values={values}
@@ -94,7 +94,7 @@ export default function NewProcessPage() {
         </Button>
 
         {submitError && (
-          <p className="mt-3 text-sm text-red-600">{submitError}</p>
+          <p className="mt-3 text-sm text-red-500">{submitError}</p>
         )}
       </div>
     </div>

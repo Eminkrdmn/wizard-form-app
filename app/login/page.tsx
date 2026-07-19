@@ -42,31 +42,33 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-100">
+    <main className="flex min-h-screen items-center justify-center bg-page">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-lg bg-white p-8 shadow"
+        className="w-full max-w-sm rounded-lg border border-line bg-card p-8 shadow"
       >
-        <h1 className="mb-6 text-2xl font-bold text-gray-800">Giriş Yap</h1>
+        <h1 className="mb-6 text-2xl font-bold">Giriş Yap</h1>
 
-        <label className="mb-1 block text-sm text-gray-600">Kullanıcı Adı</label>
+        <label className="mb-1 block text-sm text-ink-soft">
+          Kullanıcı Adı
+        </label>
         <input
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="mb-4 w-full rounded border px-3 py-2"
+          className="mb-4 w-full rounded border border-line bg-field px-3 py-2"
           required
         />
 
-        <label className="mb-1 block text-sm text-gray-600">Şifre</label>
+        <label className="mb-1 block text-sm text-ink-soft">Şifre</label>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mb-4 w-full rounded border px-3 py-2"
+          className="mb-4 w-full rounded border border-line bg-field px-3 py-2"
           required
         />
 
-        {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+        {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
 
         <button
           type="submit"
