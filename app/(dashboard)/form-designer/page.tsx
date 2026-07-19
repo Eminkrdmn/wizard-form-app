@@ -7,7 +7,7 @@ import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import Checkbox from "@/components/ui/Checkbox";
 import Button from "@/components/ui/Button";
-
+import RoleGuard from "@/components/layout/RoleGuard";
 import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -101,6 +101,7 @@ export default function FormDesignerPage() {
       return arrayMove(prev, oldIndex, newIndex);
     });
   }
+
   async function handleSaveForm() {
     if (!formName.trim() || fields.length === 0) return;
 
@@ -140,170 +141,173 @@ export default function FormDesignerPage() {
   }
 
   return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold">Form Tasarımı</h1>
+    <RoleGuard allowed={["admin"]}>
+      <div>
+        <h1 className="mb-6 text-2xl font-bold">Form Tasarımı</h1>
 
-      <div className="mb-6 max-w-md">
-        <Input
-          label="Form Adı"
-          value={formName}
-          onChange={(e) => setFormName(e.target.value)}
-          placeholder="Örn: İzin Talebi"
-        />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Sol: alan ekleme paneli */}
-        <div className="rounded-lg border bg-white p-4">
-          <h2 className="mb-4 font-semibold">Alan Ekle</h2>
-
+        <div className="mb-6 max-w-md">
           <Input
-            label="Etiket"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            placeholder="Örn: Ad Soyad"
+            label="Form Adı"
+            value={formName}
+            onChange={(e) => setFormName(e.target.value)}
+            placeholder="Örn: İzin Talebi"
           />
+        </div>
 
-          <Select
-            label="Tip"
-            options={FIELD_TYPES}
-            value={type}
-            onChange={(e) => setType(e.target.value as FieldType)}
-          />
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Sol: alan ekleme paneli */}
+          <div className="rounded-lg border bg-white p-4">
+            <h2 className="mb-4 font-semibold">Alan Ekle</h2>
 
-          {type === "select" && (
-            <div className="mb-4 rounded border bg-gray-50 p-3">
-              <p className="mb-2 text-sm font-medium text-gray-600">
-                Seçenekler
-              </p>
+            <Input
+              label="Etiket"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              placeholder="Örn: Ad Soyad"
+            />
 
-              <div className="flex gap-2">
-                <input
-                  value={optionDraft}
-                  onChange={(e) => setOptionDraft(e.target.value)}
-                  placeholder="Örn: Yıllık İzin"
-                  className="w-full rounded border px-3 py-2 text-sm"
+            <Select
+              label="Tip"
+              options={FIELD_TYPES}
+              value={type}
+              onChange={(e) => setType(e.target.value as FieldType)}
+            />
+
+            {type === "select" && (
+              <div className="mb-4 rounded border bg-gray-50 p-3">
+                <p className="mb-2 text-sm font-medium text-gray-600">
+                  Seçenekler
+                </p>
+
+                <div className="flex gap-2">
+                  <input
+                    value={optionDraft}
+                    onChange={(e) => setOptionDraft(e.target.value)}
+                    placeholder="Örn: Yıllık İzin"
+                    className="w-full rounded border px-3 py-2 text-sm"
+                  />
+                  <Button variant="secondary" onClick={handleAddOption}>
+                    Ekle
+                  </Button>
+                </div>
+
+                <ul className="mt-2 space-y-1">
+                  {options.map((opt) => (
+                    <li
+                      key={opt}
+                      className="flex items-center justify-between rounded bg-white px-3 py-1 text-sm"
+                    >
+                      {opt}
+                      <button
+                        onClick={() => handleRemoveOption(opt)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        ✕
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {fields.some((f) => f.type === "select") && (
+              <div className="mb-4 rounded border bg-gray-50 p-3">
+                <p className="mb-2 text-sm font-medium text-gray-600">
+                  Bağımlı Zorunluluk (opsiyonel)
+                </p>
+
+                <Select
+                  label="Şu alana bağlı"
+                  options={fields
+                    .filter((f) => f.type === "select")
+                    .map((f) => f.label)}
+                  placeholder="Bağımlılık yok"
+                  value={
+                    fields.find((f) => f.id === dependsOnFieldId)?.label ?? ""
+                  }
+                  onChange={(e) => {
+                    const selected = fields.find(
+                      (f) => f.label === e.target.value,
+                    );
+                    setDependsOnFieldId(selected?.id ?? "");
+                    setDependsOnValue("");
+                  }}
                 />
-                <Button variant="secondary" onClick={handleAddOption}>
-                  Ekle
+
+                {dependsOnFieldId && (
+                  <Select
+                    label="Şu değer seçilirse zorunlu olur"
+                    options={
+                      fields.find((f) => f.id === dependsOnFieldId)?.options ??
+                      []
+                    }
+                    placeholder="Değer seçin"
+                    value={dependsOnValue}
+                    onChange={(e) => setDependsOnValue(e.target.value)}
+                  />
+                )}
+              </div>
+            )}
+
+            <Checkbox
+              label="Zorunlu alan"
+              checked={required}
+              onChange={(e) => setRequired(e.target.checked)}
+            />
+
+            <Button onClick={handleAddField}>Alan Ekle</Button>
+          </div>
+
+          {/* Sağ: eklenen alanlar */}
+          <div className="rounded-lg border bg-white p-4">
+            <h2 className="mb-4 font-semibold">Eklenen Alanlar</h2>
+
+            {fields.length === 0 && (
+              <p className="text-sm text-gray-400">Henüz alan eklenmedi.</p>
+            )}
+
+            <DndContext
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={fields.map((f) => f.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <ul className="space-y-2">
+                  {fields.map((f) => (
+                    <SortableFieldItem
+                      key={f.id}
+                      field={f}
+                      onRemove={handleRemoveField}
+                    />
+                  ))}
+                </ul>
+              </SortableContext>
+            </DndContext>
+
+            {fields.length > 0 && (
+              <div className="mt-4">
+                <Button onClick={handleSaveForm} disabled={saving}>
+                  {saving ? "Kaydediliyor..." : "Formu Kaydet"}
                 </Button>
               </div>
+            )}
 
-              <ul className="mt-2 space-y-1">
-                {options.map((opt) => (
-                  <li
-                    key={opt}
-                    className="flex items-center justify-between rounded bg-white px-3 py-1 text-sm"
-                  >
-                    {opt}
-                    <button
-                      onClick={() => handleRemoveOption(opt)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      ✕
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {fields.some((f) => f.type === "select") && (
-            <div className="mb-4 rounded border bg-gray-50 p-3">
-              <p className="mb-2 text-sm font-medium text-gray-600">
-                Bağımlı Zorunluluk (opsiyonel)
+            {saveMessage && (
+              <p
+                className={`mt-3 text-sm ${
+                  saveMessage.type === "success"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {saveMessage.text}
               </p>
-
-              <Select
-                label="Şu alana bağlı"
-                options={fields
-                  .filter((f) => f.type === "select")
-                  .map((f) => f.label)}
-                placeholder="Bağımlılık yok"
-                value={
-                  fields.find((f) => f.id === dependsOnFieldId)?.label ?? ""
-                }
-                onChange={(e) => {
-                  const selected = fields.find(
-                    (f) => f.label === e.target.value,
-                  );
-                  setDependsOnFieldId(selected?.id ?? "");
-                  setDependsOnValue("");
-                }}
-              />
-
-              {dependsOnFieldId && (
-                <Select
-                  label="Şu değer seçilirse zorunlu olur"
-                  options={
-                    fields.find((f) => f.id === dependsOnFieldId)?.options ?? []
-                  }
-                  placeholder="Değer seçin"
-                  value={dependsOnValue}
-                  onChange={(e) => setDependsOnValue(e.target.value)}
-                />
-              )}
-            </div>
-          )}
-
-          <Checkbox
-            label="Zorunlu alan"
-            checked={required}
-            onChange={(e) => setRequired(e.target.checked)}
-          />
-
-          <Button onClick={handleAddField}>Alan Ekle</Button>
-        </div>
-
-        {/* Sağ: eklenen alanlar */}
-        <div className="rounded-lg border bg-white p-4">
-          <h2 className="mb-4 font-semibold">Eklenen Alanlar</h2>
-
-          {fields.length === 0 && (
-            <p className="text-sm text-gray-400">Henüz alan eklenmedi.</p>
-          )}
-
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={fields.map((f) => f.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <ul className="space-y-2">
-                {fields.map((f) => (
-                  <SortableFieldItem
-                    key={f.id}
-                    field={f}
-                    onRemove={handleRemoveField}
-                  />
-                ))}
-              </ul>
-            </SortableContext>
-          </DndContext>
-
-          {fields.length > 0 && (
-            <div className="mt-4">
-              <Button onClick={handleSaveForm} disabled={saving}>
-                {saving ? "Kaydediliyor..." : "Formu Kaydet"}
-              </Button>
-            </div>
-          )}
-
-          {saveMessage && (
-            <p
-              className={`mt-3 text-sm ${
-                saveMessage.type === "success"
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
-            >
-              {saveMessage.text}
-            </p>
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </RoleGuard>
   );
 }
