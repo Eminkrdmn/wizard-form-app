@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useFormStore } from "@/stores/formStore";
 import { useProcessStore } from "@/stores/processStore";
 import { useAuthStore } from "@/stores/authStore";
+import { useTranslation } from "react-i18next";
 import { validateForm, type FormErrors } from "@/lib/validation";
 import DynamicForm from "@/components/form-renderer/DynamicForm";
 import Button from "@/components/ui/Button";
@@ -14,6 +15,7 @@ export default function NewProcessPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const formId = searchParams.get("formId");
+  const { t } = useTranslation();
 
   const form = useFormStore((s) => s.forms.find((f) => f.id === formId));
   const addProcess = useProcessStore((s) => s.addProcess);
@@ -60,7 +62,7 @@ export default function NewProcessPage() {
       addProcess(data.process);
       router.push(`/processes/${data.process.id}`);
     } catch {
-      setSubmitError("Sunucuya ulaşılamadı");
+      setSubmitError(t("newProcess.serverError"));
     } finally {
       setSubmitting(false);
     }
@@ -69,9 +71,9 @@ export default function NewProcessPage() {
   if (!form) {
     return (
       <div>
-        <p className="text-ink-soft">Form bulunamadı.</p>
+        <p className="text-ink-soft">{t("newProcess.notFound")}</p>
         <Link href="/processes" className="text-blue-500 underline">
-          Süreçler sayfasına dön
+          {t("newProcess.back")}
         </Link>
       </div>
     );
@@ -90,7 +92,7 @@ export default function NewProcessPage() {
         />
 
         <Button onClick={handleSubmit} disabled={submitting}>
-          {submitting ? "Başlatılıyor..." : "Süreci Başlat"}
+          {submitting ? t("newProcess.starting") : t("newProcess.start")}
         </Button>
 
         {submitError && (

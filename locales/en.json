@@ -1,0 +1,92 @@
+{
+  "menu": {
+    "dashboard": "Dashboard",
+    "formDesigner": "Form Designer",
+    "processes": "Processes / My Tasks",
+    "settings": "Settings"
+  },
+  "header": {
+    "logout": "Logout"
+  },
+  "login": {
+    "title": "Sign In",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign In",
+    "loading": "Signing in...",
+    "serverError": "Could not reach the server"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "pending": "Pending Tasks",
+    "inProgress": "In Progress",
+    "completed": "Completed Tasks",
+    "empty": "No records.",
+    "rejected": "rejected"
+  },
+  "settings": {
+    "title": "Settings",
+    "userInfo": "User Information",
+    "username": "Username",
+    "role": "Role",
+    "preferences": "Preferences",
+    "theme": "Theme",
+    "language": "Language"
+  },
+  "processes": {
+    "title": "Processes / My Tasks",
+    "selectForm": "Select a Form and Start a Process",
+    "noForms": "No saved forms yet. Create one from the Form Designer first.",
+    "fields": "fields",
+    "start": "Start Process",
+    "started": "Started Processes",
+    "noProcesses": "No processes started yet."
+  },
+  "newProcess": {
+    "notFound": "Form not found.",
+    "back": "Back to processes",
+    "starting": "Starting...",
+    "start": "Start Process",
+    "serverError": "Could not reach the server"
+  },
+  "detail": {
+    "notFound": "Process not found.",
+    "back": "Back to processes",
+    "info": "Process Info",
+    "processId": "Process ID",
+    "startedAt": "Started",
+    "completedAt": "Completed",
+    "formData": "Form Data",
+    "showJson": "Show JSON output",
+    "actions": "Actions",
+    "history": "Process History"
+  },
+  "designer": {
+    "title": "Form Designer",
+    "formName": "Form Name",
+    "formNamePlaceholder": "e.g. Leave Request",
+    "addField": "Add Field",
+    "label": "Label",
+    "labelPlaceholder": "e.g. Full Name",
+    "type": "Type",
+    "options": "Options",
+    "optionPlaceholder": "e.g. Annual Leave",
+    "add": "Add",
+    "dependency": "Dependent Requirement (optional)",
+    "dependsOnField": "Depends on field",
+    "noDependency": "No dependency",
+    "dependsOnValue": "Required when this value is selected",
+    "selectValue": "Select a value",
+    "required": "Required field",
+    "addedFields": "Added Fields",
+    "noFields": "No fields added yet.",
+    "requiredTag": "required",
+    "dependentTag": "dependent",
+    "saving": "Saving...",
+    "save": "Save Form",
+    "saved": "Form saved ✓",
+    "serverError": "Could not reach the server",
+    "delete": "Delete"
+  }
+}

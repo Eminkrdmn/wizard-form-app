@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useProcessStore } from "@/stores/processStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useFormStore } from "@/stores/formStore";
+import { useTranslation } from "react-i18next";
 import { TRANSITIONS, ACTION_LABELS } from "@/lib/stateMachine";
 import type { ProcessStatus } from "@/types";
 import Button from "@/components/ui/Button";
@@ -22,6 +23,7 @@ export default function ProcessDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const { t } = useTranslation();
 
   const process = useProcessStore((s) => s.processes.find((p) => p.id === id));
   const updateStatus = useProcessStore((s) => s.updateStatus);
@@ -33,9 +35,9 @@ export default function ProcessDetailPage({
   if (!process) {
     return (
       <div>
-        <p className="text-ink-soft">Süreç bulunamadı.</p>
+        <p className="text-ink-soft">{t("detail.notFound")}</p>
         <Link href="/processes" className="text-blue-500 underline">
-          Süreçler sayfasına dön
+          {t("detail.back")}
         </Link>
       </div>
     );
@@ -60,19 +62,19 @@ export default function ProcessDetailPage({
 
       {/* Süreç bilgileri */}
       <div className="mb-6 rounded-lg border border-line bg-card p-4">
-        <h2 className="mb-3 font-semibold">Süreç Bilgileri</h2>
+        <h2 className="mb-3 font-semibold">{t("detail.info")}</h2>
         <dl className="space-y-1 text-sm">
           <div className="flex gap-2">
-            <dt className="text-ink-soft">Süreç ID:</dt>
+            <dt className="text-ink-soft">{t("detail.processId")}:</dt>
             <dd className="font-mono">{process.id}</dd>
           </div>
           <div className="flex gap-2">
-            <dt className="text-ink-soft">Başlangıç:</dt>
+            <dt className="text-ink-soft">{t("detail.startedAt")}:</dt>
             <dd>{new Date(process.createdAt).toLocaleString("tr-TR")}</dd>
           </div>
           {process.completedAt && (
             <div className="flex gap-2">
-              <dt className="text-ink-soft">Bitiş:</dt>
+              <dt className="text-ink-soft">{t("detail.completedAt")}:</dt>
               <dd>{new Date(process.completedAt).toLocaleString("tr-TR")}</dd>
             </div>
           )}
@@ -81,7 +83,7 @@ export default function ProcessDetailPage({
 
       {/* Form verileri */}
       <div className="mb-6 rounded-lg border border-line bg-card p-4">
-        <h2 className="mb-3 font-semibold">Form Verileri</h2>
+        <h2 className="mb-3 font-semibold">{t("detail.formData")}</h2>
         <dl className="space-y-1 text-sm">
           {Object.entries(process.data).map(([fieldId, value]) => (
             <div key={fieldId} className="flex gap-2">
@@ -93,7 +95,7 @@ export default function ProcessDetailPage({
 
         <details className="mt-3">
           <summary className="cursor-pointer text-sm text-blue-500">
-            JSON çıktısını göster
+            {t("detail.showJson")}
           </summary>
           <pre className="mt-2 overflow-auto rounded bg-gray-950 p-3 text-xs text-green-400">
             {JSON.stringify(process.data, null, 2)}
@@ -104,7 +106,7 @@ export default function ProcessDetailPage({
       {/* Aksiyonlar */}
       {nextStatuses.length > 0 && (
         <div className="mb-6 rounded-lg border border-line bg-card p-4">
-          <h2 className="mb-3 font-semibold">Aksiyonlar</h2>
+          <h2 className="mb-3 font-semibold">{t("detail.actions")}</h2>
           <div className="flex gap-2">
             {nextStatuses.map((status) => (
               <Button
@@ -127,7 +129,7 @@ export default function ProcessDetailPage({
 
       {/* Geçmiş */}
       <div className="rounded-lg border border-line bg-card p-4">
-        <h2 className="mb-3 font-semibold">Süreç Geçmişi</h2>
+        <h2 className="mb-3 font-semibold">{t("detail.history")}</h2>
         <ul className="space-y-2 text-sm">
           {process.history.map((h, i) => (
             <li key={i} className="flex gap-2 text-ink-soft">

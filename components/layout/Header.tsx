@@ -2,11 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
+import { useTranslation } from "react-i18next";
 
 export default function Header() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const { t } = useTranslation();
 
   function handleLogout() {
     logout();
@@ -25,7 +27,7 @@ export default function Header() {
           onClick={handleLogout}
           className="rounded border border-line px-3 py-1 text-sm hover:bg-page"
         >
-          Çıkış
+          {t("header.logout")}
         </button>
       </div>
     </header>

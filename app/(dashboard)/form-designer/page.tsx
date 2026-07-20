@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormStore } from "@/stores/formStore";
+import { useTranslation } from "react-i18next";
 import type { FieldType, FormField } from "@/types";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
@@ -26,6 +27,7 @@ const FIELD_TYPES: FieldType[] = [
 
 export default function FormDesignerPage() {
   const addForm = useFormStore((s) => s.addForm);
+  const { t } = useTranslation();
 
   // form geneli
   const [formName, setFormName] = useState("");
@@ -132,9 +134,9 @@ export default function FormDesignerPage() {
       addForm(data.form);
       setFormName("");
       setFields([]);
-      setSaveMessage({ type: "success", text: "Form kaydedildi ✓" });
+      setSaveMessage({ type: "success", text: t("designer.saved") });
     } catch {
-      setSaveMessage({ type: "error", text: "Sunucuya ulaşılamadı" });
+      setSaveMessage({ type: "error", text: t("designer.serverError") });
     } finally {
       setSaving(false);
     }
@@ -143,31 +145,31 @@ export default function FormDesignerPage() {
   return (
     <RoleGuard allowed={["admin"]}>
       <div>
-        <h1 className="mb-6 text-2xl font-bold">Form Tasarımı</h1>
+        <h1 className="mb-6 text-2xl font-bold">{t("designer.title")}</h1>
 
         <div className="mb-6 max-w-md">
           <Input
-            label="Form Adı"
+            label={t("designer.formName")}
             value={formName}
             onChange={(e) => setFormName(e.target.value)}
-            placeholder="Örn: İzin Talebi"
+            placeholder={t("designer.formNamePlaceholder")}
           />
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Sol: alan ekleme paneli */}
           <div className="rounded-lg border border-line bg-card p-4">
-            <h2 className="mb-4 font-semibold">Alan Ekle</h2>
+            <h2 className="mb-4 font-semibold">{t("designer.addField")}</h2>
 
             <Input
-              label="Etiket"
+              label={t("designer.label")}
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="Örn: Ad Soyad"
+              placeholder={t("designer.labelPlaceholder")}
             />
 
             <Select
-              label="Tip"
+              label={t("designer.type")}
               options={FIELD_TYPES}
               value={type}
               onChange={(e) => setType(e.target.value as FieldType)}
@@ -176,18 +178,18 @@ export default function FormDesignerPage() {
             {type === "select" && (
               <div className="mb-4 rounded border border-line bg-page p-3">
                 <p className="mb-2 text-sm font-medium text-ink-soft">
-                  Seçenekler
+                  {t("designer.options")}
                 </p>
 
                 <div className="flex gap-2">
                   <input
                     value={optionDraft}
                     onChange={(e) => setOptionDraft(e.target.value)}
-                    placeholder="Örn: Yıllık İzin"
+                    placeholder={t("designer.optionPlaceholder")}
                     className="w-full rounded border border-line bg-field px-3 py-2 text-sm"
                   />
                   <Button variant="secondary" onClick={handleAddOption}>
-                    Ekle
+                    {t("designer.add")}
                   </Button>
                 </div>
 
@@ -213,15 +215,15 @@ export default function FormDesignerPage() {
             {fields.some((f) => f.type === "select") && (
               <div className="mb-4 rounded border border-line bg-page p-3">
                 <p className="mb-2 text-sm font-medium text-ink-soft">
-                  Bağımlı Zorunluluk (opsiyonel)
+                  {t("designer.dependency")}
                 </p>
 
                 <Select
-                  label="Şu alana bağlı"
+                  label={t("designer.dependsOnField")}
                   options={fields
                     .filter((f) => f.type === "select")
                     .map((f) => f.label)}
-                  placeholder="Bağımlılık yok"
+                  placeholder={t("designer.noDependency")}
                   value={
                     fields.find((f) => f.id === dependsOnFieldId)?.label ?? ""
                   }
@@ -236,12 +238,12 @@ export default function FormDesignerPage() {
 
                 {dependsOnFieldId && (
                   <Select
-                    label="Şu değer seçilirse zorunlu olur"
+                    label={t("designer.dependsOnValue")}
                     options={
                       fields.find((f) => f.id === dependsOnFieldId)?.options ??
                       []
                     }
-                    placeholder="Değer seçin"
+                    placeholder={t("designer.selectValue")}
                     value={dependsOnValue}
                     onChange={(e) => setDependsOnValue(e.target.value)}
                   />
@@ -250,20 +252,20 @@ export default function FormDesignerPage() {
             )}
 
             <Checkbox
-              label="Zorunlu alan"
+              label={t("designer.required")}
               checked={required}
               onChange={(e) => setRequired(e.target.checked)}
             />
 
-            <Button onClick={handleAddField}>Alan Ekle</Button>
+            <Button onClick={handleAddField}>{t("designer.addField")}</Button>
           </div>
 
           {/* Sağ: eklenen alanlar */}
           <div className="rounded-lg border border-line bg-card p-4">
-            <h2 className="mb-4 font-semibold">Eklenen Alanlar</h2>
+            <h2 className="mb-4 font-semibold">{t("designer.addedFields")}</h2>
 
             {fields.length === 0 && (
-              <p className="text-sm text-ink-soft">Henüz alan eklenmedi.</p>
+              <p className="text-sm text-ink-soft">{t("designer.noFields")}</p>
             )}
 
             <DndContext
@@ -289,7 +291,7 @@ export default function FormDesignerPage() {
             {fields.length > 0 && (
               <div className="mt-4">
                 <Button onClick={handleSaveForm} disabled={saving}>
-                  {saving ? "Kaydediliyor..." : "Formu Kaydet"}
+                  {saving ? t("designer.saving") : t("designer.save")}
                 </Button>
               </div>
             )}

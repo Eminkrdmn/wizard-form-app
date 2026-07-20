@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useFormStore } from "@/stores/formStore";
 import { useProcessStore } from "@/stores/processStore";
+import { useTranslation } from "react-i18next";
 import type { ProcessStatus } from "@/types";
 import Button from "@/components/ui/Button";
 
@@ -16,18 +17,16 @@ const STATUS_STYLES: Record<ProcessStatus, string> = {
 export default function ProcessesPage() {
   const forms = useFormStore((s) => s.forms);
   const processes = useProcessStore((s) => s.processes);
+  const { t } = useTranslation();
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Süreçler / İşlerim</h1>
+      <h1 className="mb-6 text-2xl font-bold">{t("processes.title")}</h1>
 
-      <h2 className="mb-3 font-semibold">Form Seç ve Süreç Başlat</h2>
+      <h2 className="mb-3 font-semibold">{t("processes.selectForm")}</h2>
 
       {forms.length === 0 && (
-        <p className="text-sm text-ink-soft">
-          Henüz kayıtlı form yok. Önce Form Tasarımı ekranından bir form
-          oluştur.
-        </p>
+        <p className="text-sm text-ink-soft">{t("processes.noForms")}</p>
       )}
 
       <ul className="max-w-lg space-y-2">
@@ -39,21 +38,21 @@ export default function ProcessesPage() {
             <div>
               <p className="font-medium">{form.name}</p>
               <p className="text-sm text-ink-soft">
-                {form.fields.length} alan •{" "}
+                {form.fields.length} {t("processes.fields")} •{" "}
                 {new Date(form.createdAt).toLocaleDateString("tr-TR")}
               </p>
             </div>
             <Link href={`/processes/new?formId=${form.id}`}>
-              <Button>Süreç Başlat</Button>
+              <Button>{t("processes.start")}</Button>
             </Link>
           </li>
         ))}
       </ul>
 
-      <h2 className="mb-3 mt-8 font-semibold">Başlatılan Süreçler</h2>
+      <h2 className="mb-3 mt-8 font-semibold">{t("processes.started")}</h2>
 
       {processes.length === 0 && (
-        <p className="text-sm text-ink-soft">Henüz başlatılmış süreç yok.</p>
+        <p className="text-sm text-ink-soft">{t("processes.noProcesses")}</p>
       )}
 
       <ul className="max-w-lg space-y-2">

@@ -1,0 +1,92 @@
+{
+  "menu": {
+    "dashboard": "Dashboard",
+    "formDesigner": "Form Tasarımı",
+    "processes": "Süreçler / İşlerim",
+    "settings": "Ayarlar"
+  },
+  "header": {
+    "logout": "Çıkış"
+  },
+  "login": {
+    "title": "Giriş Yap",
+    "username": "Kullanıcı Adı",
+    "password": "Şifre",
+    "submit": "Giriş Yap",
+    "loading": "Giriş yapılıyor...",
+    "serverError": "Sunucuya ulaşılamadı"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Hoş geldin",
+    "pending": "Bekleyen İşler",
+    "inProgress": "Devam Eden İşler",
+    "completed": "Tamamlanan İşler",
+    "empty": "Kayıt yok.",
+    "rejected": "reddedildi"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "userInfo": "Kullanıcı Bilgileri",
+    "username": "Kullanıcı adı",
+    "role": "Rol",
+    "preferences": "Tercihler",
+    "theme": "Tema",
+    "language": "Dil"
+  },
+  "processes": {
+    "title": "Süreçler / İşlerim",
+    "selectForm": "Form Seç ve Süreç Başlat",
+    "noForms": "Henüz kayıtlı form yok. Önce Form Tasarımı ekranından bir form oluştur.",
+    "fields": "alan",
+    "start": "Süreç Başlat",
+    "started": "Başlatılan Süreçler",
+    "noProcesses": "Henüz başlatılmış süreç yok."
+  },
+  "newProcess": {
+    "notFound": "Form bulunamadı.",
+    "back": "Süreçler sayfasına dön",
+    "starting": "Başlatılıyor...",
+    "start": "Süreci Başlat",
+    "serverError": "Sunucuya ulaşılamadı"
+  },
+  "detail": {
+    "notFound": "Süreç bulunamadı.",
+    "back": "Süreçler sayfasına dön",
+    "info": "Süreç Bilgileri",
+    "processId": "Süreç ID",
+    "startedAt": "Başlangıç",
+    "completedAt": "Bitiş",
+    "formData": "Form Verileri",
+    "showJson": "JSON çıktısını göster",
+    "actions": "Aksiyonlar",
+    "history": "Süreç Geçmişi"
+  },
+  "designer": {
+    "title": "Form Tasarımı",
+    "formName": "Form Adı",
+    "formNamePlaceholder": "Örn: İzin Talebi",
+    "addField": "Alan Ekle",
+    "label": "Etiket",
+    "labelPlaceholder": "Örn: Ad Soyad",
+    "type": "Tip",
+    "options": "Seçenekler",
+    "optionPlaceholder": "Örn: Yıllık İzin",
+    "add": "Ekle",
+    "dependency": "Bağımlı Zorunluluk (opsiyonel)",
+    "dependsOnField": "Şu alana bağlı",
+    "noDependency": "Bağımlılık yok",
+    "dependsOnValue": "Şu değer seçilirse zorunlu olur",
+    "selectValue": "Değer seçin",
+    "required": "Zorunlu alan",
+    "addedFields": "Eklenen Alanlar",
+    "noFields": "Henüz alan eklenmedi.",
+    "requiredTag": "zorunlu",
+    "dependentTag": "bağımlı",
+    "saving": "Kaydediliyor...",
+    "save": "Formu Kaydet",
+    "saved": "Form kaydedildi ✓",
+    "serverError": "Sunucuya ulaşılamadı",
+    "delete": "Sil"
+  }
+}

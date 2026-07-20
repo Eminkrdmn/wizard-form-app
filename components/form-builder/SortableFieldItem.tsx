@@ -2,6 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useTranslation } from "react-i18next";
 import type { FormField } from "@/types";
 import Button from "@/components/ui/Button";
 
@@ -14,6 +15,7 @@ export default function SortableFieldItem({
   field,
   onRemove,
 }: SortableFieldItemProps) {
+  const { t } = useTranslation();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: field.id });
 
@@ -33,20 +35,20 @@ export default function SortableFieldItem({
           {...attributes}
           {...listeners}
           className="cursor-grab text-ink-soft hover:text-ink"
-          aria-label="Sürükle"
+          aria-label="drag"
         >
           ⠿
         </button>
         <span>
           {field.label}{" "}
           <span className="text-ink-soft">
-            ({field.type}){field.required && " • zorunlu"}
-            {field.dependsOn && " • bağımlı"}
+            ({field.type}){field.required && ` • ${t("designer.requiredTag")}`}
+            {field.dependsOn && ` • ${t("designer.dependentTag")}`}
           </span>
         </span>
       </div>
       <Button variant="danger" onClick={() => onRemove(field.id)}>
-        Sil
+        {t("designer.delete")}
       </Button>
     </li>
   );
