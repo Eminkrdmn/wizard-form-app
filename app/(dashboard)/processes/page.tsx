@@ -6,13 +6,7 @@ import { useProcessStore } from "@/stores/processStore";
 import { useTranslation } from "react-i18next";
 import type { ProcessStatus } from "@/types";
 import Button from "@/components/ui/Button";
-
-const STATUS_STYLES: Record<ProcessStatus, string> = {
-  Beklemede: "bg-yellow-100 text-yellow-800",
-  DevamEdiyor: "bg-blue-100 text-blue-800",
-  Tamamlandi: "bg-green-100 text-green-800",
-  Reddedildi: "bg-red-100 text-red-800",
-};
+import { STATUS_STYLES } from "@/lib/statusStyles";
 
 export default function ProcessesPage() {
   const forms = useFormStore((s) => s.forms);
