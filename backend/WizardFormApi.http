@@ -1,0 +1,6 @@
+@WizardFormApi_HostAddress = http://localhost:5112
+
+GET {{WizardFormApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
