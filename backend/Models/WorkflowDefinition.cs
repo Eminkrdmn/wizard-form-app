@@ -10,6 +10,7 @@ public class WorkflowDefinition
     public bool IsPredefined { get; set; } = true;
     public bool IsActive { get; set; } = true;
     public int? FormTemplateId { get; set; }
+    public string? NextWorkflowCode { get; set; }
 
     public FormDefinition? FormTemplate { get; set; }
     public List<WorkflowStep> Steps { get; set; } = new();

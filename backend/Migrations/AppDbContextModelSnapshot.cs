@@ -129,6 +129,9 @@ namespace WizardFormApi.Migrations
                     b.Property<int?>("FormId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ParentProcessId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -141,6 +144,8 @@ namespace WizardFormApi.Migrations
                     b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("FormId");
+
+                    b.HasIndex("ParentProcessId");
 
                     b.HasIndex("WorkflowDefinitionId");
 
@@ -300,6 +305,9 @@ namespace WizardFormApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("NextWorkflowCode")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
@@ -393,6 +401,11 @@ namespace WizardFormApi.Migrations
                         .HasForeignKey("FormId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("WizardFormApi.Models.ProcessInstance", "ParentProcess")
+                        .WithMany("ChildProcesses")
+                        .HasForeignKey("ParentProcessId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("WizardFormApi.Models.WorkflowDefinition", "WorkflowDefinition")
                         .WithMany("Instances")
                         .HasForeignKey("WorkflowDefinitionId")
@@ -402,6 +415,8 @@ namespace WizardFormApi.Migrations
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("Form");
+
+                    b.Navigation("ParentProcess");
 
                     b.Navigation("WorkflowDefinition");
                 });
@@ -513,6 +528,8 @@ namespace WizardFormApi.Migrations
 
             modelBuilder.Entity("WizardFormApi.Models.ProcessInstance", b =>
                 {
+                    b.Navigation("ChildProcesses");
+
                     b.Navigation("History");
 
                     b.Navigation("WorkItems");

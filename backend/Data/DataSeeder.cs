@@ -281,12 +281,12 @@ public static class DataSeeder
 
         return new List<WorkflowDefinition>
         {
-            // A — Tedarik Zinciri (6 zincirleme)
-            new() { Name = "Mağaza Sipariş Talebi", Code = "MAGAZA_SIPARIS", Category = "TEDARIK", Description = "Mağazadan ürün sipariş süreci", FormTemplate = f["Mağaza Sipariş Formu"] },
-            new() { Name = "Satın Alma Talebi", Code = "SATIN_ALMA_TALEBI", Category = "TEDARIK", Description = "Hammadde ve malzeme satın alma süreci", FormTemplate = f["Satın Alma Talebi Formu"] },
-            new() { Name = "Sera Üretim Emri", Code = "SERA_URETIM", Category = "TEDARIK", Description = "Sera üretim planlama ve emir süreci", FormTemplate = f["Sera Üretim Emri Formu"] },
-            new() { Name = "Depo Giriş/Çıkış", Code = "DEPO_GIRIS_CIKIS", Category = "TEDARIK", Description = "Depo stok hareketi kayıt süreci", FormTemplate = f["Depo Giriş/Çıkış Formu"] },
-            new() { Name = "Teslimat Planlaması", Code = "TESLIMAT_PLANLAMA", Category = "TEDARIK", Description = "Teslimat rota ve zamanlama süreci", FormTemplate = f["Teslimat Planlama Formu"] },
+            // A — Tedarik Zinciri (6 zincirleme: Sipariş → Satın Alma → Üretim → Depo → Teslimat → Fatura)
+            new() { Name = "Mağaza Sipariş Talebi", Code = "MAGAZA_SIPARIS", Category = "TEDARIK", Description = "Mağazadan ürün sipariş süreci", FormTemplate = f["Mağaza Sipariş Formu"], NextWorkflowCode = "SATIN_ALMA_TALEBI" },
+            new() { Name = "Satın Alma Talebi", Code = "SATIN_ALMA_TALEBI", Category = "TEDARIK", Description = "Hammadde ve malzeme satın alma süreci", FormTemplate = f["Satın Alma Talebi Formu"], NextWorkflowCode = "SERA_URETIM" },
+            new() { Name = "Sera Üretim Emri", Code = "SERA_URETIM", Category = "TEDARIK", Description = "Sera üretim planlama ve emir süreci", FormTemplate = f["Sera Üretim Emri Formu"], NextWorkflowCode = "DEPO_GIRIS_CIKIS" },
+            new() { Name = "Depo Giriş/Çıkış", Code = "DEPO_GIRIS_CIKIS", Category = "TEDARIK", Description = "Depo stok hareketi kayıt süreci", FormTemplate = f["Depo Giriş/Çıkış Formu"], NextWorkflowCode = "TESLIMAT_PLANLAMA" },
+            new() { Name = "Teslimat Planlaması", Code = "TESLIMAT_PLANLAMA", Category = "TEDARIK", Description = "Teslimat rota ve zamanlama süreci", FormTemplate = f["Teslimat Planlama Formu"], NextWorkflowCode = "FATURA_ONAY" },
             new() { Name = "Fatura Onayı", Code = "FATURA_ONAY", Category = "TEDARIK", Description = "Fatura ve ödeme onay süreci", FormTemplate = f["Fatura Onay Formu"] },
 
             // B — Franchise (2)

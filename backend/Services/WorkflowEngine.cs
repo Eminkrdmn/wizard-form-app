@@ -115,6 +115,10 @@ public class WorkflowEngine
                 Comment = "Tüm adımlar onaylandı",
                 PerformedByUserId = userId
             });
+
+            await _context.SaveChangesAsync();
+
+            await TryChainNextProcessAsync(process, userId);
         }
         else
         {
@@ -130,9 +134,9 @@ public class WorkflowEngine
                 AssignedToRoleId = assignedRoleId,
                 Status = "Beklemede"
             });
-        }
 
-        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+        }
 
         return await GetProcessDetailAsync(process.Id);
     }
@@ -186,6 +190,15 @@ public class WorkflowEngine
                 CreatedByName = p.CreatedByUser.DisplayName,
                 CreatedAt = p.CreatedAt,
                 CompletedAt = p.CompletedAt,
+                ParentProcessId = p.ParentProcessId,
+                ChildProcesses = p.ChildProcesses
+                    .Select(c => new ChainedProcessDto
+                    {
+                        Id = c.Id,
+                        WorkflowName = c.WorkflowDefinition.Name,
+                        Status = c.Status,
+                        CreatedAt = c.CreatedAt
+                    }).ToList(),
                 WorkItems = p.WorkItems
                     .OrderBy(w => w.WorkflowStep.StepOrder)
                     .Select(w => new WorkItemDto
@@ -359,5 +372,71 @@ public class WorkflowEngine
         }
 
         return step.AssignedRoleId;
+    }
+
+    private async Task TryChainNextProcessAsync(ProcessInstance completedProcess, int userId)
+    {
+        var workflow = await _context.WorkflowDefinitions
+            .FirstOrDefaultAsync(w => w.Id == completedProcess.WorkflowDefinitionId);
+
+        if (workflow == null || string.IsNullOrEmpty(workflow.NextWorkflowCode))
+            return;
+
+        var nextWorkflow = await _context.WorkflowDefinitions
+            .Include(w => w.Steps)
+            .FirstOrDefaultAsync(w => w.Code == workflow.NextWorkflowCode && w.IsActive);
+
+        if (nextWorkflow == null)
+            return;
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+            return;
+
+        var firstStep = FindNextStep(nextWorkflow.Steps, 0, completedProcess.DataJson);
+        if (firstStep == null)
+            return;
+
+        var childProcess = new ProcessInstance
+        {
+            WorkflowDefinitionId = nextWorkflow.Id,
+            FormId = nextWorkflow.FormTemplateId,
+            DataJson = completedProcess.DataJson,
+            Status = "Aktif",
+            CurrentStepOrder = firstStep.StepOrder,
+            CreatedByUserId = completedProcess.CreatedByUserId,
+            ParentProcessId = completedProcess.Id
+        };
+
+        _context.Processes.Add(childProcess);
+        await _context.SaveChangesAsync();
+
+        var assignedRoleId = ResolveRoleId(firstStep, user);
+
+        _context.WorkItems.Add(new WorkItem
+        {
+            ProcessInstanceId = childProcess.Id,
+            WorkflowStepId = firstStep.Id,
+            AssignedToRoleId = assignedRoleId,
+            Status = "Beklemede"
+        });
+
+        _context.ProcessHistories.Add(new ProcessHistory
+        {
+            ProcessInstanceId = childProcess.Id,
+            Action = "Süreç Otomatik Başlatıldı",
+            Comment = $"{workflow.Name} tamamlanınca otomatik tetiklendi",
+            PerformedByUserId = userId
+        });
+
+        _context.ProcessHistories.Add(new ProcessHistory
+        {
+            ProcessInstanceId = completedProcess.Id,
+            Action = "Zincirleme Tetikleme",
+            Comment = $"{nextWorkflow.Name} süreci otomatik başlatıldı",
+            PerformedByUserId = userId
+        });
+
+        await _context.SaveChangesAsync();
     }
 }

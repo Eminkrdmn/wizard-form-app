@@ -108,6 +108,12 @@ public class AppDbContext : DbContext
             .WithOne(h => h.Process)
             .HasForeignKey(h => h.ProcessInstanceId);
 
+        modelBuilder.Entity<ProcessInstance>()
+            .HasOne(p => p.ParentProcess)
+            .WithMany(p => p.ChildProcesses)
+            .HasForeignKey(p => p.ParentProcessId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         // ── WorkItem ──
         modelBuilder.Entity<WorkItem>()
             .HasOne(w => w.WorkflowStep)

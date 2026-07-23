@@ -114,7 +114,8 @@ namespace WizardFormApi.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     IsPredefined = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
-                    FormTemplateId = table.Column<int>(type: "INTEGER", nullable: true)
+                    FormTemplateId = table.Column<int>(type: "INTEGER", nullable: true),
+                    NextWorkflowCode = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -140,7 +141,8 @@ namespace WizardFormApi.Migrations
                     CurrentStepOrder = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedByUserId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    CompletedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    CompletedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    ParentProcessId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -149,6 +151,12 @@ namespace WizardFormApi.Migrations
                         name: "FK_Processes_Forms_FormId",
                         column: x => x.FormId,
                         principalTable: "Forms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Processes_Processes_ParentProcessId",
+                        column: x => x.ParentProcessId,
+                        principalTable: "Processes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
@@ -297,6 +305,11 @@ namespace WizardFormApi.Migrations
                 name: "IX_Processes_FormId",
                 table: "Processes",
                 column: "FormId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Processes_ParentProcessId",
+                table: "Processes",
+                column: "ParentProcessId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Processes_WorkflowDefinitionId",

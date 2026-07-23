@@ -54,8 +54,18 @@ public class ProcessDetailDto
     public string CreatedByName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
+    public int? ParentProcessId { get; set; }
+    public List<ChainedProcessDto> ChildProcesses { get; set; } = new();
     public List<WorkItemDto> WorkItems { get; set; } = new();
     public List<HistoryDto> History { get; set; } = new();
+}
+
+public class ChainedProcessDto
+{
+    public int Id { get; set; }
+    public string WorkflowName { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
 }
 
 public class HistoryDto
