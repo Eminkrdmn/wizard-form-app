@@ -98,7 +98,34 @@ public class WorkflowStepDto
     public string Name { get; set; } = string.Empty;
     public string ActionType { get; set; } = string.Empty;
     public string AssignedRoleName { get; set; } = string.Empty;
+    public int AssignedRoleId { get; set; }
     public bool IsConditional { get; set; }
     public string? ConditionJson { get; set; }
     public string? AssignmentRule { get; set; }
+}
+
+public class CreateWorkflowRequest
+{
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public int? FormTemplateId { get; set; }
+    public List<CreateWorkflowStepRequest> Steps { get; set; } = new();
+}
+
+public class CreateWorkflowStepRequest
+{
+    public int StepOrder { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public int AssignedRoleId { get; set; }
+    public string ActionType { get; set; } = "Approve";
+}
+
+public class UpdateWorkflowRequest
+{
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public int? FormTemplateId { get; set; }
+    public List<CreateWorkflowStepRequest> Steps { get; set; } = new();
 }
