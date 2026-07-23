@@ -8,6 +8,7 @@ public class WorkflowStep
     public string Name { get; set; } = string.Empty;
     public int AssignedRoleId { get; set; }
     public string ActionType { get; set; } = "Approve";
+    public string? AssignmentRule { get; set; }
     public bool IsConditional { get; set; }
     public string? ConditionJson { get; set; }
 

@@ -176,6 +176,7 @@ namespace WizardFormApi.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     AssignedRoleId = table.Column<int>(type: "INTEGER", nullable: false),
                     ActionType = table.Column<string>(type: "TEXT", nullable: false),
+                    AssignmentRule = table.Column<string>(type: "TEXT", nullable: true),
                     IsConditional = table.Column<bool>(type: "INTEGER", nullable: false),
                     ConditionJson = table.Column<string>(type: "TEXT", nullable: true)
                 },

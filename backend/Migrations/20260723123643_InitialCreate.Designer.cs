@@ -11,7 +11,7 @@ using WizardFormApi.Data;
 namespace WizardFormApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260723112118_InitialCreate")]
+    [Migration("20260723123643_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -325,6 +325,9 @@ namespace WizardFormApi.Migrations
 
                     b.Property<int>("AssignedRoleId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("AssignmentRule")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ConditionJson")
                         .HasColumnType("TEXT");

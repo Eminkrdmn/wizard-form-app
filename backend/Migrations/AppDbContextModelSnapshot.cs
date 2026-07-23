@@ -323,6 +323,9 @@ namespace WizardFormApi.Migrations
                     b.Property<int>("AssignedRoleId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("AssignmentRule")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ConditionJson")
                         .HasColumnType("TEXT");
 
