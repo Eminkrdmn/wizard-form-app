@@ -14,6 +14,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // ── Services ──
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<DepartmentService>();
+builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<UserService>();
 
 // ── Controllers ──
 builder.Services.AddControllers();
