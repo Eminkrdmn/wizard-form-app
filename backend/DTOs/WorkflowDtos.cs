@@ -65,3 +65,40 @@ public class HistoryDto
     public string PerformedByName { get; set; } = string.Empty;
     public DateTime PerformedAt { get; set; }
 }
+
+public class WorkflowListDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public bool IsPredefined { get; set; }
+    public int StepCount { get; set; }
+    public int? FormTemplateId { get; set; }
+}
+
+public class WorkflowDetailDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public bool IsPredefined { get; set; }
+    public int? FormTemplateId { get; set; }
+    public string? FormFieldsJson { get; set; }
+    public List<WorkflowStepDto> Steps { get; set; } = new();
+}
+
+public class WorkflowStepDto
+{
+    public int Id { get; set; }
+    public int StepOrder { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string ActionType { get; set; } = string.Empty;
+    public string AssignedRoleName { get; set; } = string.Empty;
+    public bool IsConditional { get; set; }
+    public string? ConditionJson { get; set; }
+    public string? AssignmentRule { get; set; }
+}
