@@ -176,59 +176,74 @@ public class WorkflowEngine
 
     public async Task<ProcessDetailDto?> GetProcessDetailAsync(int processId)
     {
-        return await _context.Processes
-            .Where(p => p.Id == processId)
-            .Select(p => new ProcessDetailDto
+        var process = await _context.Processes
+            .Include(p => p.WorkflowDefinition)
+            .Include(p => p.CreatedByUser)
+            .Include(p => p.WorkItems).ThenInclude(w => w.WorkflowStep)
+            .Include(p => p.WorkItems).ThenInclude(w => w.AssignedToRole)
+            .Include(p => p.WorkItems).ThenInclude(w => w.AssignedToUser)
+            .Include(p => p.WorkItems).ThenInclude(w => w.CompletedByUser)
+            .Include(p => p.History).ThenInclude(h => h.PerformedByUser)
+            .FirstOrDefaultAsync(p => p.Id == processId);
+
+        if (process == null)
+            return null;
+
+        var childProcesses = await _context.Processes
+            .Where(c => c.ParentProcessId == processId)
+            .Include(c => c.WorkflowDefinition)
+            .Select(c => new ChainedProcessDto
             {
-                Id = p.Id,
-                WorkflowName = p.WorkflowDefinition.Name,
-                WorkflowCode = p.WorkflowDefinition.Code,
-                Category = p.WorkflowDefinition.Category,
-                Status = p.Status,
-                CurrentStepOrder = p.CurrentStepOrder,
-                DataJson = p.DataJson,
-                CreatedByName = p.CreatedByUser.DisplayName,
-                CreatedAt = p.CreatedAt,
-                CompletedAt = p.CompletedAt,
-                ParentProcessId = p.ParentProcessId,
-                ChildProcesses = p.ChildProcesses
-                    .Select(c => new ChainedProcessDto
-                    {
-                        Id = c.Id,
-                        WorkflowName = c.WorkflowDefinition.Name,
-                        Status = c.Status,
-                        CreatedAt = c.CreatedAt
-                    }).ToList(),
-                WorkItems = p.WorkItems
-                    .OrderBy(w => w.WorkflowStep.StepOrder)
-                    .Select(w => new WorkItemDto
-                    {
-                        Id = w.Id,
-                        ProcessInstanceId = p.Id,
-                        ProcessName = p.WorkflowDefinition.Name,
-                        StepName = w.WorkflowStep.Name,
-                        StepOrder = w.WorkflowStep.StepOrder,
-                        ActionType = w.WorkflowStep.ActionType,
-                        Status = w.Status,
-                        AssignedToRoleName = w.AssignedToRole.Name,
-                        AssignedToUserName = w.AssignedToUser != null ? w.AssignedToUser.DisplayName : null,
-                        Notes = w.Notes,
-                        CreatedAt = w.CreatedAt,
-                        CompletedAt = w.CompletedAt,
-                        CompletedByName = w.CompletedByUser != null ? w.CompletedByUser.DisplayName : null,
-                        CreatedByName = p.CreatedByUser.DisplayName
-                    }).ToList(),
-                History = p.History
-                    .OrderByDescending(h => h.PerformedAt)
-                    .Select(h => new HistoryDto
-                    {
-                        Action = h.Action,
-                        Comment = h.Comment,
-                        PerformedByName = h.PerformedByUser.DisplayName,
-                        PerformedAt = h.PerformedAt
-                    }).ToList()
+                Id = c.Id,
+                WorkflowName = c.WorkflowDefinition.Name,
+                Status = c.Status,
+                CreatedAt = c.CreatedAt
             })
-            .FirstOrDefaultAsync();
+            .ToListAsync();
+
+        return new ProcessDetailDto
+        {
+            Id = process.Id,
+            WorkflowName = process.WorkflowDefinition.Name,
+            WorkflowCode = process.WorkflowDefinition.Code,
+            Category = process.WorkflowDefinition.Category,
+            Status = process.Status,
+            CurrentStepOrder = process.CurrentStepOrder,
+            DataJson = process.DataJson,
+            CreatedByName = process.CreatedByUser.DisplayName,
+            CreatedAt = process.CreatedAt,
+            CompletedAt = process.CompletedAt,
+            ParentProcessId = process.ParentProcessId,
+            ChildProcesses = childProcesses,
+            WorkItems = process.WorkItems
+                .OrderBy(w => w.WorkflowStep.StepOrder)
+                .Select(w => new WorkItemDto
+                {
+                    Id = w.Id,
+                    ProcessInstanceId = process.Id,
+                    ProcessName = process.WorkflowDefinition.Name,
+                    StepName = w.WorkflowStep.Name,
+                    StepOrder = w.WorkflowStep.StepOrder,
+                    ActionType = w.WorkflowStep.ActionType,
+                    Status = w.Status,
+                    AssignedToRoleName = w.AssignedToRole.Name,
+                    AssignedToUserName = w.AssignedToUser?.DisplayName,
+                    Notes = w.Notes,
+                    CreatedAt = w.CreatedAt,
+                    CompletedAt = w.CompletedAt,
+                    CompletedByName = w.CompletedByUser?.DisplayName,
+                    CreatedByName = process.CreatedByUser.DisplayName
+                }).ToList(),
+            History = process.History
+                .OrderByDescending(h => h.PerformedAt)
+                .Select(h => new HistoryDto
+                {
+                    Action = h.Action,
+                    Comment = h.Comment,
+                    PerformedByName = h.PerformedByUser.DisplayName,
+                    PerformedAt = h.PerformedAt
+                }).ToList()
+        };
     }
 
     public async Task<List<ProcessDto>> GetProcessesAsync(int? userId = null, string? status = null)
