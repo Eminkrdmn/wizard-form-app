@@ -4,12 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using WizardFormApi.Data;
+using WizardFormApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ── Database ──
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// ── Services ──
+builder.Services.AddScoped<AuthService>();
 
 // ── Controllers ──
 builder.Services.AddControllers();
