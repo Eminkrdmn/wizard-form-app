@@ -18,6 +18,7 @@ builder.Services.AddScoped<DepartmentService>();
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<FormService>();
+builder.Services.AddScoped<WorkflowEngine>();
 
 // ── Controllers ──
 builder.Services.AddControllers();
