@@ -218,6 +218,67 @@ public class WorkflowEngine
             .FirstOrDefaultAsync();
     }
 
+    public async Task<List<ProcessDto>> GetProcessesAsync(int? userId = null, string? status = null)
+    {
+        var query = _context.Processes.AsQueryable();
+
+        if (userId.HasValue)
+            query = query.Where(p => p.CreatedByUserId == userId.Value);
+
+        if (!string.IsNullOrEmpty(status))
+            query = query.Where(p => p.Status == status);
+
+        return await query
+            .OrderByDescending(p => p.CreatedAt)
+            .Select(p => new ProcessDto
+            {
+                Id = p.Id,
+                WorkflowName = p.WorkflowDefinition.Name,
+                WorkflowCode = p.WorkflowDefinition.Code,
+                Status = p.Status,
+                CurrentStepOrder = p.CurrentStepOrder,
+                CurrentStepName = p.WorkflowDefinition.Steps
+                    .Where(s => s.StepOrder == p.CurrentStepOrder)
+                    .Select(s => s.Name)
+                    .FirstOrDefault(),
+                CreatedByName = p.CreatedByUser.DisplayName,
+                CreatedAt = p.CreatedAt,
+                CompletedAt = p.CompletedAt
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<WorkItemDto>> GetWorkItemsAsync(int roleId, int? userId = null, string? status = null)
+    {
+        var query = _context.WorkItems
+            .Where(w => w.AssignedToRoleId == roleId ||
+                        (w.AssignedToUserId != null && w.AssignedToUserId == userId));
+
+        if (!string.IsNullOrEmpty(status))
+            query = query.Where(w => w.Status == status);
+
+        return await query
+            .OrderByDescending(w => w.CreatedAt)
+            .Select(w => new WorkItemDto
+            {
+                Id = w.Id,
+                ProcessInstanceId = w.ProcessInstanceId,
+                ProcessName = w.Process.WorkflowDefinition.Name,
+                StepName = w.WorkflowStep.Name,
+                StepOrder = w.WorkflowStep.StepOrder,
+                ActionType = w.WorkflowStep.ActionType,
+                Status = w.Status,
+                AssignedToRoleName = w.AssignedToRole.Name,
+                AssignedToUserName = w.AssignedToUser != null ? w.AssignedToUser.DisplayName : null,
+                Notes = w.Notes,
+                CreatedAt = w.CreatedAt,
+                CompletedAt = w.CompletedAt,
+                CompletedByName = w.CompletedByUser != null ? w.CompletedByUser.DisplayName : null,
+                CreatedByName = w.Process.CreatedByUser.DisplayName
+            })
+            .ToListAsync();
+    }
+
     private WorkflowStep? FindNextStep(IEnumerable<WorkflowStep> steps, int currentOrder, string formDataJson)
     {
         var orderedSteps = steps
